@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+    <h1>{{ member.username }}의 프로필 페이지</h1>
+
+
+    <div>
+        <h2>username : {{ member.username }}</h2>
+
+        {% if member.profile_photo %}
+                <img src="{{ member.profile_photo.url }}">
+            {% else %}
+                <img src="{% static '../static/users/profile_photo.png' %}">
+            {% endif %}
+
+            <form action="{% url 'accounts:profile_photo' %}" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit">저장</button>
+            </form>
+
+            <p>가입일 : {{ member.date_joined }}</p>
+        <p>내가 등록한 물품들: {{ member.articles.count }}</p>
+        <p> 
+            팔로워 : {{ member.followers.count }}명
+            팔로잉 : {{ member.following.count }}명
+        </p>
+    </div>
+
+    <div>
+        좋아요 한 물건 갯수 : {{ member.like_articles.count }}개
+
+        {% for article in like_articles %}
+            <a href="{% url 'products:article_detail' article.pk %}">
+                <p>{{ article.title }} | {{ article.content}}</p>
+            </a><hr>
+        {% endfor %}
+    </div>
+
+    <div>
+        {% if request.user != member %}
+            <form action="{% url 'users:follow' member.pk %}" method="POST">
+                {% csrf_token %}
+                {% if user in member.followers.all %}
+                    <button type="submit">언팔로우</button>
+                {% else %}
+                    <button type="submit">팔로우</button>
+                {% endif %}
+            </form>
+        {% else %}
+            <a href="{% url 'accounts:update'%}">회원정보 수정</a>
+        {% endif %}
+    </div>
+
+    <a href="/index/">홈으로 돌아가기</a>
+
+{% endblock content %}
