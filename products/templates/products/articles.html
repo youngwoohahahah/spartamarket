@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Articles</h1>
+    <a href="{% url 'products:create' %}">새로운 상품 등록</a>
+
+    {% for article in articles %}
+    <a href="{% url 'products:article_detail' article.pk %}">
+        <p>[ {{ article.id }} ] {{ article.title }}</p>
+    </a><hr>
+    {% endfor %}
+
+{% endblock content %}
